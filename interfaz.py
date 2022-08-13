@@ -1,31 +1,41 @@
 
 #from curses.textpad import Textbox
 from tkinter import *
-import tkinter 
+import tkinter
+from xml.dom import NoModificationAllowedErr 
 from analizador import analizador
 from tkinter import ttk
 
 #from gestorInterfaz import gestorInterfaz
 
+
+
 class menuInicio():
 
 
-    def __init__(self) -> None:
+    def __init__(self,listCursos) -> None:
         self.funciones = analizador()
-       
+        self.listCursos=listCursos
+
 
         def bCargar():
             #lee el archivo y hace todo el analisis lexico
             txt = self.funciones.cargarArchivo()
-            print(txt)
+            #print(txt)
+            if txt != None:
+                self.listCursos = self.funciones.anal(txt)
+            #self.funciones.imprimirCursos(self.listCursos)
+
             pass
 
         def bGestionar():
             ventana.destroy()
-            menuGestionar()
+            menuGestionar(self.listCursos)
             pass
 
         def bConteo():
+            ventana.destroy()
+            conteoCred(self.listCursos)
             pass
 
         def bSalir():
@@ -59,34 +69,41 @@ class menuInicio():
         b_conteo.place(x=144,y=240)
         b_salir.place(x=190,y=285)
 
+        self.funciones.imprimirCursos(self.listCursos)
         ventana.mainloop()
         pass
 
 class menuGestionar():
 
-    def __init__(self) -> None:
+    def __init__(self,listCursos) -> None:
+        self.listCursos = listCursos
+        self.funciones = analizador()
 
         def bLista():
             ventana.destroy()
-            lista()
+            lista(self.listCursos)
             pass
 
         def bAgrerar():
             ventana.destroy()
-            IUcursos(True)
+            IUcursos(True,self.listCursos)
             pass
 
         def bEditar():
+            ventana.destroy()
+            IUcursos(False,self.listCursos)
             pass
 
         def bEliminar():
+            ventana.destroy()
+            eliminarCurso(self.listCursos)
             #ventana.destroy()
             pass
 
 
         def bRegresar():
             ventana.destroy()
-            menuInicio()
+            menuInicio(self.listCursos)
             pass
 
         ventana = Tk()
@@ -107,16 +124,19 @@ class menuGestionar():
         b_eliminar.place(x=154,y=195)
         b_regresar.place(x=171,y=250)
 
+        self.funciones.imprimirCursos(self.listCursos)
         #ventana.mainloop()
         pass
 
 class lista():
 
-    def __init__(self) -> None:
+    def __init__(self,listCursos) -> None:
+        self.listCursos = listCursos
+        self.funciones = analizador()
 
         def bRegresar():
             ventana.destroy()
-            menuGestionar()
+            menuGestionar(self.listCursos)
             pass
 
         ventana = Tk()
@@ -149,10 +169,23 @@ class lista():
         table.heading('5', text="Créditos",anchor=CENTER)
         table.heading('6', text="Estado",anchor=CENTER)
 
-        table.insert("",END,values=("192", "Lenguajes Formales de Programacion","192","Si","10","12","Pendiente"))
-        for i in range(20):
-            table.insert("",END,values=(i,i,i,i,i,i,i,i))
+        #table.insert("",END,values=("192", "Lenguajes Formales de Programacion","192","Si","10","12","Pendiente"))
+        #for i in range(20):
+        #    table.insert("",END,values=(i,i,i,i,i,i,i,i))
+        for i in self.listCursos:
+            if i.obl == "1":
+                obl = "Obligatorio"
+            else:
+                obl = "Opcional"
 
+            if i.est == "1":
+                est = "Cursando"
+            elif i.est == "0":
+                est="Aprobado"
+            else:
+                est="Pendiente"
+            
+            table.insert("",END,values=(i.cod,i.nombre,i.preRe,obl,i.sem,i.cred,est))
         #table.place(x=40,y=20)
 
         scrol = ttk.Scrollbar(ventana,orient=tkinter.VERTICAL,command=table.yview)
@@ -165,12 +198,15 @@ class lista():
 
         b_regresar.place(x=680,y=330)
 
+        self.funciones.imprimirCursos(self.listCursos)
         #ventana.mainloop()
         pass
 
 class IUcursos():
 
-    def __init__(self,bool) -> None:
+    def __init__(self,bool,listCursos) -> None:
+        self.listCursos = listCursos
+        self.funciones = analizador()
         
         def bAgregar():
             print("Agregar")
@@ -182,7 +218,7 @@ class IUcursos():
 
         def bRegresar():
             ventana.destroy()
-            menuGestionar()
+            menuGestionar(self.listCursos)
             pass
 
         ventana = Tk()
@@ -233,12 +269,16 @@ class IUcursos():
             b_agregar.config(text="Editar Curso")
             ventana.title("Editar Curso")
         
+
+        self.funciones.imprimirCursos(self.listCursos)
         #ventana.mainloop()
         pass
 
 class eliminarCurso():
 
-    def __init__(self) -> None:
+    def __init__(self,listCursos) -> None:
+        self.listCursos = listCursos
+        self.funciones = analizador()
 
         def bEliminar():
             print("Eliminar")
@@ -246,7 +286,7 @@ class eliminarCurso():
 
         def bRegresar():
             ventana.destroy()
-            menuGestionar()
+            menuGestionar(self.listCursos)
             pass
 
         ventana = Tk()
@@ -266,5 +306,69 @@ class eliminarCurso():
         t_codigo.place(x=175,y=45)
 
 
-        ventana.mainloop()
+
+        self.funciones.imprimirCursos(self.listCursos)
+        #ventana.mainloop()
+        pass
+
+
+class conteoCred():
+
+    def __init__(self,listCursos) -> None:
+        self.listCursos = listCursos
+        self.funciones = analizador()
+
+        def bContarObligatorio():
+            print("Contar Obligatorio")
+            pass
+
+        def bContarSemestre():
+            print("COntar Semestre")
+            pass
+        
+        def bRegresar():
+            ventana.destroy()
+            menuInicio(self.listCursos)
+            pass
+
+        ventana = Tk()
+
+        ventana.geometry("430x350")
+        ventana.config(bg="#00E7CE")
+        ventana.resizable(False,False)
+        ventana.title("Conteo de Créditos")
+
+
+
+        Label(ventana,text="Créditos Aprobados: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=40)
+        Label(ventana,text="Créditos Cursados: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=80)
+        Label(ventana,text="Créditos Pendientes: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=120)
+        Label(ventana,text="Créditos obligatorios hasta semestre N: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=160)
+        Label(ventana,text="Semestre",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=200)
+        Label(ventana,text="Créditos del Semestre: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=240)
+        Label(ventana,text="Semestre",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=280)
+
+        b_contarObligatorio= Button(ventana,text="Contar", command=bContarObligatorio,font=('Times New Roman',13), fg='#000000', bg='#ffffff')
+        b_contarSemestre= Button(ventana,text="Contar", command=bContarSemestre,font=('Times New Roman',13), fg='#000000', bg='#ffffff')
+        b_regresar= Button(ventana,text="Regresar",command=bRegresar, font=('Times New Roman',13), fg='#000000', bg='#ffffff')
+        b_contarObligatorio.place(x=220,y=195)
+        b_contarSemestre.place(x=220,y=275)
+        b_regresar.place(x=340,y=305)
+
+        cajaCombo1 = ttk.Combobox(ventana,values=["1","2","3","4","5","6","7","8","9","10"],state="readonly",width=5)
+        cajaCombo2 = ttk.Combobox(ventana,values=["1","2","3","4","5","6","7","8","9","10"],state="readonly",width=5)
+
+        cajaCombo1.place(x=150,y=200)
+        cajaCombo2.place(x=150,y=280)
+
+
+        cajaCombo1.current(0)
+        cajaCombo2.current(0)
+
+
+
+
+        self.funciones.imprimirCursos(self.listCursos)
+        #ventana.mainloop()
+
         pass
