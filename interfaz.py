@@ -5,6 +5,7 @@
 
 #from curses.ascii import isdigit
 from ast import Return
+from cgitb import text
 from tkinter import *
 import tkinter
 from tkinter import messagebox
@@ -257,12 +258,13 @@ class IUcursos():
             # #print("Agregar")
             cod = tCodigo.get()
             encontrado = self.funciones.buscarCurso(self.listCursos,cod)
+            semestre = tSem.get()
             try:
                 if int(cod)<0:
                     messagebox.showerror(message="No se puede ingresar un codigo de curso que no sea numero menor que 0",title="Error")
                     return None
-                if int(tSem.get())<1 and int(tSem.get())>10:
-                    messagebox.showerror(message="No se puede ingresar un semestre que no sea numero menor que 0",title="Error")
+                if int(tSem.get())<1 or int(tSem.get())>10:
+                    messagebox.showerror(message="Rango no vàlido para el semestre",title="Error")
                     return None
                 if int(tCre.get())<0:
                     messagebox.showerror(message="No se puede ingresar un credito que no sea numero menor que 0",title="Error")
@@ -338,7 +340,7 @@ class IUcursos():
                 if int(cod)<0:
                     messagebox.showerror(message="No se puede ingresar un codigo de curso que no sea numero menor que 0",title="Error")
                     return None
-                if int(tSem.get())<1 and int(tSem.get())>10:
+                if int(tSem.get())<1 or int(tSem.get())>10:
                     messagebox.showerror(message="No se puede ingresar un semestre que no sea numero menor que 0",title="Error")
                     return None
                 if int(tCre.get())<0:
@@ -571,11 +573,20 @@ class conteoCred():
         self.funciones = analizador()
 
         def bContarObligatorio():
-            print("Contar Obligatorio")
-            pass
+            #print("Contar Obligatorio")
+            semestre=cajaCombo1.get()
+            result= self.funciones.semestreN(self.listCursos,int(semestre))
+            msg ="Créditos obligatorios hasta semestre "+semestre+": " + str(result)
+            messagebox.showinfo(message=msg,title="Conteo Créditos")
+            #l_credObl.config(text="réditos obligatorios hasta semestre N: " + str(result))
+            
 
         def bContarSemestre():
-            print("COntar Semestre")
+            #print("COntar Semestre")
+            semestre=cajaCombo2.get()
+            result= self.funciones.calSemestre(self.listCursos,int(semestre))
+            msg = "Créditos Aprovados en el semestre " + semestre+ ": " + str(result[0]) +"\nCréditos Cursando en el semestre " + semestre+ ": " + str(result[1]) +"\nCréditos Pendientes en el semestre " + semestre +": " + str(result[2])
+            messagebox.showinfo(message=msg,title="Conteo Créditos")
             pass
         
         def bRegresar():
@@ -590,14 +601,15 @@ class conteoCred():
         ventana.resizable(False,False)
         ventana.title("Conteo de Créditos")
 
+        res=self.funciones.calcularCreditos(self.listCursos)
 
 
-        Label(ventana,text="Créditos Aprobados: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=40)
-        Label(ventana,text="Créditos Cursados: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=80)
-        Label(ventana,text="Créditos Pendientes: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=120)
-        Label(ventana,text="Créditos obligatorios hasta semestre N: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=160)
+        Label(ventana,text="Créditos Aprobados: " +str(res[0]) ,font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=40)
+        Label(ventana,text="Créditos Cursados: "+str(res[1]),font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=80)
+        Label(ventana,text="Créditos Pendientes: "+str(res[2]),font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=120)
+        Label(ventana,text="Créditos obligatorios hasta semestre N:",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=160)
         Label(ventana,text="Semestre",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=200)
-        Label(ventana,text="Créditos del Semestre: XX",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=240)
+        Label(ventana,text="Créditos del Semestre:",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=240)
         Label(ventana,text="Semestre",font=("Times New Roman",13),bg="#00E7CE").place(x=40,y=280)
 
         b_contarObligatorio= Button(ventana,text="Contar", command=bContarObligatorio,font=('Times New Roman',13), fg='#000000', bg='#ffffff')
@@ -616,6 +628,9 @@ class conteoCred():
 
         cajaCombo1.current(0)
         cajaCombo2.current(0)
+
+        
+        
 
 
 

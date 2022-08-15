@@ -140,4 +140,53 @@ class analizador():
                     estado=0
                 
         return True
-        pass
+        
+    def calcularCreditos(self,listCursos):
+        credAprovados =0
+        credCursando=0
+        credPendientes =0
+
+        for curso in listCursos:
+            if curso.est == "0":
+                credAprovados+= int(curso.cred)
+            elif curso.est== "1":
+                credCursando+= int(curso.cred)
+            elif curso.est=="-1" and curso.obl=="1":
+                credPendientes+= int(curso.cred)
+
+        resultados = []
+        resultados.append(credAprovados)
+        resultados.append(credCursando)
+        resultados.append(credPendientes)
+        return resultados
+
+    def semestreN(self,listCursos,n):
+        credObl=0
+
+        for curso in listCursos:
+            if curso.obl== "1" and int(curso.sem) <=n:
+                credObl += int(curso.cred)
+
+        return credObl
+    
+    def calSemestre(self,listCursos,n):
+        credAprovados=0
+        credCursando=0
+        credPendientes=0
+
+        for curso in listCursos:
+            if curso.est == "0" and int(curso.sem)==n:
+                credAprovados+= int(curso.cred)
+            elif curso.est== "1" and int(curso.sem)==n:
+                credCursando+= int(curso.cred)
+            elif curso.est=="-1" and curso.obl=="1" and int(curso.sem)==n:
+                credPendientes+= int(curso.cred)
+
+        resultados = []
+        resultados.append(credAprovados)
+        resultados.append(credCursando)
+        resultados.append(credPendientes)
+        return resultados
+
+    #def credCursando()
+
