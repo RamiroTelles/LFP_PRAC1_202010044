@@ -1,8 +1,9 @@
 
 from tkinter import Tk 
 from tkinter.filedialog import askopenfilename
-#from token import token
-#from typeToken import typetoken
+from tkinter import messagebox
+from Eltoken import token
+from typeToken import typetoken
 from curso import curso
 
 class analizador():
@@ -21,11 +22,11 @@ class analizador():
                 txt = file.read().strip()
                 file.close()
         except:
-            print("Error")
+            messagebox.showerror(message="Error",title="Error")
             return None
 
         
-        
+        messagebox.showinfo(message="Se han cargado los datos Correctamente",title="Carga de archivos")
         return str(txt)
 
 
@@ -36,9 +37,27 @@ class analizador():
         for obj in filas:
             column = obj.split(",")
             #preRe = column[2].split(";")
-            listCursos.append(curso(column[0],column[1],column[2],column[3],column[4],column[5],column[6]))
+            encontrado = self.buscarCurso(listCursos,column[0])
+            if encontrado==-1:
+                listCursos.append(curso(column[0],column[1],column[2],column[3],column[4],column[5],column[6]))
+            else:
+                listCursos[encontrado] = curso(column[0],column[1],column[2],column[3],column[4],column[5],column[6])
+
+            #listCursos.append(curso(column[0],column[1],column[2],column[3],column[4],column[5],column[6]))
 
         return listCursos
+
+    def buscarCurso(self,listCursos,cod):
+        i=0
+        for curso in listCursos:
+
+            if cod == curso.cod:
+                return i
+            else:
+                i+=1
+        return -1
+
+        pass
 
     def imprimirCursos(self,listCursos):
         try:
@@ -58,95 +77,67 @@ class analizador():
 
 
 
-# #    def analLexico(self,texto):
-# #        estado=0
-# #        lexema=""
-# #        columna=1
-# #        fila=1
-# #        
-# #        tokens= []
-#         i=0
-#         actual=""
-#         long = len(texto)
-#         while(i<long and texto[i]!=None):
-#             actual=texto[i]
-
-#             if estado==0:
-#                 if actual.isalpha():
-#                     lexema+=actual
-#                     estado=2
-#                     i+=1
-#                     columna+=1
-#                     continue
-#                 elif actual.isdigit():
-#                     lexema+=actual
-#                     estado=1
-#                     i+=1
-#                     columna+=1
-#                     continue
-#                 elif actual == '-':
-#                     lexema+= actual
-#                     tokens.append(token(typetoken.menos,lexema,fila,columna))
-#                     lexema=""
-#                     i+=1
-#                     columna+=1
-#                     continue
-#                 elif actual== ',':
-#                     lexema+=actual
-#                     tokens.append(token(typetoken.coma,lexema,fila,columna))
-#                     lexema=""
-#                     i+=1
-#                     columna+=1
-#                     continue
-#                 elif actual == ';':
-#                     lexema+=actual
-#                     tokens.append(token(typetoken.puntoComa,lexema,fila,columna))
-#                     lexema=""
-#                     i+=1
-#                     columna+=1
-#                     continue
-#                 elif actual=='\n':
-#                     fila+=1
-#                     i+=1
-#                     columna=1
-#                     continue
-#                 elif actual=='\t' or actual=='\r':
-#                     i+=1
-#                     columna+=5
-#                     continue
-#                 elif actual==' ':
-#                     i+=1
-#                     columna+=1
-#                     continue
-#                 else:
-#                     #print("Simbolo " + actual + " no reconocido")
-#                     errores+= "Simbolo "+ actual + " no reconocido en columna: "+ str(columna) + " fila: "+ str(fila)+ "\n"
-#                     i+=1
-#                     columna+=1
-#                     continue
-#             elif estado==1:
-#                 if actual.isdigit():
-#                     lexema+=actual
-#                     i+=1
-#                     columna+=1
-#                     continue
-#                 else:
-#                     tokens.append(token(typetoken.digito,lexema,fila,columna))
-#                     lexema=""
-#                     estado=0
-#                     continue
-#             elif estado==2:
-#                 if actual!=",":
-#                     tokens.append(token(typetoken.nombre,lexema,fila,columna))
-#                     estado=0
-#                     lexema=""
-#                     continue
-#                 else:
-#                     lexema+=actual
-#                     i+=1
-#                     columna+=1
-#                     continue
+    def analLexico(self,texto):
+        estado=0
+        lexema=""
+        columna=1
+        fila=1
         
-#         resultados = []
-#         resultados.append(tokens)
-#         return resultados
+        tokens= []
+        i=0
+        actual=""
+        long = len(texto)
+        while(i<long and texto[i]!=None):
+            actual=texto[i]
+
+            if estado==0:
+                
+                if actual.isdigit():
+                    lexema+=actual
+                    tokens.append(token(typetoken.digito,lexema,fila,columna))
+                    estado=0
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual == ';':
+                    lexema+=actual
+                    tokens.append(token(typetoken.puntoComa,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual=='\t' or actual=='\r':
+                    i+=1
+                    columna+=5
+                    continue
+                elif actual==' ':
+                    i+=1
+                    columna+=1
+                    continue
+                else:
+                    #print("Simbolo " + actual + " no reconocido")
+                    #errores+= "Simbolo "+ actual + " no reconocido en columna: "+ str(columna) + " fila: "+ str(fila)+ "\n"
+                    i+=1
+                    columna+=1
+                    return False
+
+        
+        
+        return tokens
+
+    def analSintactico(self,tokens):
+
+        estado=0
+        for token in tokens:
+            if estado==0:
+                if token.type == typetoken.digito:
+                    estado=1
+                else:
+                    return False
+            if estado == 1:
+                if token.type == typetoken.puntoComa:
+                    estado=0
+                
+        return True
+        pass

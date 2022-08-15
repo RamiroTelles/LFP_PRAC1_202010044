@@ -5,4 +5,3 @@ class token:
         self.type = type
         self.fila = fila
         self.columna = columna
-
