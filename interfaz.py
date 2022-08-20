@@ -257,7 +257,7 @@ class IUcursos():
         def bAgregar():
             # #print("Agregar")
             cod = tCodigo.get()
-            encontrado = self.funciones.buscarCurso(self.listCursos,cod)
+            encontrado = self.funciones.buscarCurso(self.listCursos,cod.strip())
             semestre = tSem.get()
             try:
                 if int(cod)<0:
@@ -298,7 +298,7 @@ class IUcursos():
                     est ="-1"
 
                 
-                self.listCursos.append(cur(cod,tNombre.get(),tPre.get(),opc,tSem.get(),tCre.get(),est))
+                self.listCursos.append(cur(cod.strip(),tNombre.get(),tPre.get(),opc,tSem.get(),tCre.get(),est))
                 messagebox.showinfo(message="Se ha agregado el curso correctamente",title="Exito")
             else:
                 bool = messagebox.askyesno(message="El curso que ingresó ya se encuentra ingresado, ¿Desea Sobreescribirlo?",title="Curso Repetido")
@@ -335,7 +335,7 @@ class IUcursos():
 
         def bActu():
             cod = cCodigo.get()
-            encontrado = self.funciones.buscarCurso(self.listCursos,cod)
+            encontrado = self.funciones.buscarCurso(self.listCursos,cod.strip())
             try:
                 if int(cod)<0:
                     messagebox.showerror(message="No se puede ingresar un codigo de curso que no sea numero menor que 0",title="Error")
@@ -377,7 +377,7 @@ class IUcursos():
             else:
                 est ="-1"
 
-            self.listCursos[encontrado]= cur(cod,tNombre.get(),tPre.get(),opc,tSem.get(),tCre.get(),est)
+            self.listCursos[encontrado]= cur(cod.strip(),tNombre.get(),tPre.get(),opc,tSem.get(),tCre.get(),est)
             messagebox.showinfo(message="Se ha Editado el curso correctamente",title="Exito")
             
                   

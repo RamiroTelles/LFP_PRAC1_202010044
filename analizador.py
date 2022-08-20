@@ -39,9 +39,9 @@ class analizador():
             #preRe = column[2].split(";")
             encontrado = self.buscarCurso(listCursos,column[0])
             if encontrado==-1:
-                listCursos.append(curso(column[0],column[1],column[2],column[3],column[4],column[5],column[6]))
+                listCursos.append(curso(column[0].strip(),column[1],column[2],column[3].strip(),column[4],column[5],column[6].strip()))
             else:
-                listCursos[encontrado] = curso(column[0],column[1],column[2],column[3],column[4],column[5],column[6])
+                listCursos[encontrado] = curso(column[0].strip(),column[1],column[2],column[3].strip(),column[4],column[5],column[6].strip())
 
             #listCursos.append(curso(column[0],column[1],column[2],column[3],column[4],column[5],column[6]))
 
