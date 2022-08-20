@@ -305,9 +305,9 @@ class IUcursos():
 
                 if bool:
                     if cOpc.get() == "Opcional":
-                        opc =0
+                        opc ="0"
                     else:
-                        opc=1
+                        opc="1"
 
                     if cEst.get() == "Aprobado":
                         est ="0"
@@ -366,9 +366,9 @@ class IUcursos():
                 return None
 
             if cOpc.get() == "Opcional":
-                opc =0
+                opc ="0"
             else:
-                opc=1
+                opc ="1"
 
             if cEst.get() == "Aprobado":
                 est ="0"
